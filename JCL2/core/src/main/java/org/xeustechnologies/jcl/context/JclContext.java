@@ -18,9 +18,9 @@
 package org.xeustechnologies.jcl.context;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
+import java.util.concurrent.ConcurrentHashMap;
 import org.xeustechnologies.jcl.JarClassLoader;
 import org.xeustechnologies.jcl.exception.JclContextException;
 
@@ -32,8 +32,7 @@ import org.xeustechnologies.jcl.exception.JclContextException;
  * 
  */
 public class JclContext {
-    private static final Map<String, JarClassLoader> loaders = Collections
-            .synchronizedMap( new HashMap<String, JarClassLoader>() );
+    private static final Map<String, JarClassLoader> loaders = new ConcurrentHashMap<>();
     public static final String DEFAULT_NAME = "jcl";
 
     public JclContext() {

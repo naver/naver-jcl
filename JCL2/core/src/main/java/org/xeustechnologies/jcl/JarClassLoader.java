@@ -21,10 +21,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.jar.JarEntry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,14 +52,14 @@ public class JarClassLoader extends AbstractClassLoader {
 
     public JarClassLoader() {
         classpathResources = new ClasspathResources();
-        classes = Collections.synchronizedMap( new HashMap<String, Class>() );
+        classes = new ConcurrentHashMap<>();
         initialize();
     }
 
     public JarClassLoader(final ClassLoader parent) {
         super(parent);
         classpathResources = new ClasspathResources();
-        classes = Collections.synchronizedMap( new HashMap<String, Class>() );
+        classes = new ConcurrentHashMap<>();
         initialize();
     }
 
