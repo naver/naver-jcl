@@ -68,6 +68,10 @@ public abstract class ProxyClassLoader implements Comparable<ProxyClassLoader> {
      */
     public abstract URL findResource(String name);
 
+    public URL findResource(String name, URLCreator creator) {
+        return findResource(name);
+    }
+
     public boolean isEnabled() {
         return enabled;
     }

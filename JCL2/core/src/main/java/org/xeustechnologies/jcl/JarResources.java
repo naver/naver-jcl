@@ -78,6 +78,23 @@ public class JarResources {
         return null;
     }
 
+    public URL getResourceURL(String name, URLCreator creator) {
+
+        JclJarEntry entry = jarEntryContents.get(name);
+        if (entry != null) {
+            if (entry.getBaseUrl() == null) {
+                throw new JclException( "non-URL accessible resource" );
+            }
+            try {
+                return creator.create( entry.getBaseUrl().toString() + name );
+            } catch (MalformedURLException e) {
+                throw new JclException( e );
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @param name
      * @return byte[]
