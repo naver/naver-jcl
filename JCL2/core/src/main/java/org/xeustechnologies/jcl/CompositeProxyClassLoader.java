@@ -19,10 +19,12 @@
  */
 package org.xeustechnologies.jcl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -68,6 +70,16 @@ public class CompositeProxyClassLoader extends ProxyClassLoader {
 		Iterator<ProxyClassLoader> iterator = proxyClassLoaders.iterator();
 		while (result == null && iterator.hasNext()) {
 			result = iterator.next().findResource(name);
+		}
+		return result;
+	}
+
+	@Override
+	public Enumeration<URL> findResources(String name, URLCreator creator) throws IOException {
+		Enumeration<URL> result = null;
+		Iterator<ProxyClassLoader> iterator = proxyClassLoaders.iterator();
+		while (result == null && iterator.hasNext()) {
+			result = iterator.next().findResources(name, creator);
 		}
 		return result;
 	}

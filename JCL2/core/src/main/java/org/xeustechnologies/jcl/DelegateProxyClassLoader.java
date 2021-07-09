@@ -19,8 +19,10 @@
  */
 package org.xeustechnologies.jcl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
 
 /**
  * 
@@ -68,6 +70,11 @@ public class DelegateProxyClassLoader extends ProxyClassLoader {
 	@Override
 	public URL findResource(String name) {
 		return delegate.getResource(name);
+	}
+
+	@Override
+	public Enumeration<URL> findResources(String name, URLCreator creator) throws IOException {
+		return delegate.getResources(name);
 	}
 
 	public AbstractClassLoader getDelegate() {

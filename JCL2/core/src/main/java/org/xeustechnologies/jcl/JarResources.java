@@ -25,11 +25,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 
 import org.slf4j.Logger;
@@ -93,6 +93,15 @@ public class JarResources {
         }
 
         return null;
+    }
+
+    public Enumeration<URL> getResourceURLs(String name, URLCreator creator) {
+        final Vector<URL> vector = new Vector<>();
+        final URL url = getResourceURL(name, creator);
+        if (url != null) {
+            vector.add(url);
+        }
+        return vector.elements();
     }
 
     /**
@@ -256,7 +265,7 @@ public class JarResources {
 
     /**
      * For debugging
-     * 
+     *
      * @param je
      * @return String
      */

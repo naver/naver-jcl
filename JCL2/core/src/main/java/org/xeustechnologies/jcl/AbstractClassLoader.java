@@ -276,6 +276,11 @@ public abstract class AbstractClassLoader extends ClassLoader {
 
             return null;
         }
+
+        @Override
+        public Enumeration<URL> findResources(String name, URLCreator creator) throws IOException {
+            return getSystemResources(name);
+        }
     }
 
     /**
@@ -330,6 +335,11 @@ public abstract class AbstractClassLoader extends ClassLoader {
                 return url;
             }
             return null;
+        }
+
+        @Override
+        public Enumeration<URL> findResources(String name, URLCreator creator) throws IOException {
+            return getParent().getResources(name);
         }
     }
 
@@ -388,6 +398,11 @@ public abstract class AbstractClassLoader extends ClassLoader {
 
             return null;
         }
+
+        @Override
+        public Enumeration<URL> findResources(String name, URLCreator creator) throws IOException {
+            return getClass().getClassLoader().getResources(name);
+        }
     }
 
     /**
@@ -442,6 +457,11 @@ public abstract class AbstractClassLoader extends ClassLoader {
             }
 
             return null;
+        }
+
+        @Override
+        public Enumeration<URL> findResources(String name, URLCreator creator) throws IOException {
+            return Thread.currentThread().getContextClassLoader().getResources(name);
         }
 
     }
@@ -515,6 +535,20 @@ public abstract class AbstractClassLoader extends ClassLoader {
             }
 
             return url;
+        }
+
+        @Override
+        public Enumeration<URL> findResources(String name, URLCreator creator) throws IOException {
+            Enumeration<URL> urls = null;
+
+            if (enabled && isPartOfOsgiBootDelegation(name)) {
+                urls = getParentLoader().findResources(name, creator);
+                if (urls == null && strictLoading) {
+                    throw new ResourceNotFoundException("JCL OSGi Boot Delegation: Resource " + name + " not found.");
+                }
+            }
+
+            return urls;
         }
 
         /**

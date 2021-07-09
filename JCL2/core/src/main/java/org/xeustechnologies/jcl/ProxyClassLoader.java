@@ -17,8 +17,10 @@
 
 package org.xeustechnologies.jcl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Enumeration;
 
 /**
  * @author Kamran Zafar
@@ -71,6 +73,8 @@ public abstract class ProxyClassLoader implements Comparable<ProxyClassLoader> {
     public URL findResource(String name, URLCreator creator) {
         return findResource(name);
     }
+
+    public abstract Enumeration<URL> findResources(String name, URLCreator creator) throws IOException;
 
     public boolean isEnabled() {
         return enabled;

@@ -18,9 +18,11 @@
 package org.xeustechnologies.jcl;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,9 +35,9 @@ import org.xeustechnologies.jcl.exception.ResourceNotFoundException;
 /**
  * Reads the class bytes from jar files and other resources using
  * ClasspathResources
- * 
+ *
  * @author Kamran Zafar
- * 
+ *
  */
 @SuppressWarnings("unchecked")
 public class JarClassLoader extends AbstractClassLoader {
@@ -65,7 +67,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Some initialisations
-     * 
+     *
      */
     public void initialize() {
         addLoader( localLoader );
@@ -73,7 +75,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Loads classes from different sources
-     * 
+     *
      * @param sources
      */
     public JarClassLoader(Object[] sources) {
@@ -83,7 +85,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Loads classes from different sources
-     * 
+     *
      * @param sources
      */
     public JarClassLoader(List sources) {
@@ -93,7 +95,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Add all jar/class sources
-     * 
+     *
      * @param sources
      */
     public void addAll(Object[] sources) {
@@ -104,7 +106,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Add all jar/class sources
-     * 
+     *
      * @param sources
      */
     public void addAll(List sources) {
@@ -115,7 +117,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Loads local/remote source
-     * 
+     *
      * @param source
      */
     public void add(Object source) {
@@ -132,7 +134,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Loads local/remote resource
-     * 
+     *
      * @param resourceName
      */
     public void add(String resourceName) {
@@ -141,7 +143,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Loads classes from InputStream
-     * 
+     *
      * @param jarStream
      */
     public void add(InputStream jarStream) {
@@ -150,7 +152,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Loads local/remote resource
-     * 
+     *
      * @param url
      */
     public void add(URL url) {
@@ -160,7 +162,7 @@ public class JarClassLoader extends AbstractClassLoader {
     /**
      * Reads the class bytes from different local and remote resources using
      * ClasspathResources
-     * 
+     *
      * @param className
      * @return byte[]
      */
@@ -173,7 +175,7 @@ public class JarClassLoader extends AbstractClassLoader {
     /**
      * Attempts to unload class, it only unloads the locally loaded classes by
      * JCL
-     * 
+     *
      * @param className
      */
     public void unloadClass(String className) {
@@ -219,7 +221,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Local class loader
-     * 
+     *
      */
     class LocalLoader extends ProxyClassLoader {
 
@@ -304,6 +306,16 @@ public class JarClassLoader extends AbstractClassLoader {
 
             return null;
         }
+
+        @Override
+        public Enumeration<URL> findResources(String name, URLCreator creator) throws IOException {
+            Enumeration<URL> urls = classpathResources.getResourceURLs(name, creator);
+            if (urls != null) {
+                logger.debug( "Returning newly loaded resource {}", name );
+                return urls;
+            }
+            return null;
+        }
     }
 
     public char getClassNameReplacementChar() {
@@ -316,7 +328,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Returns all loaded classes and resources
-     * 
+     *
      * @return Map
      */
     public Map<String, byte[]> getLoadedResources() {
@@ -332,7 +344,7 @@ public class JarClassLoader extends AbstractClassLoader {
 
     /**
      * Returns all JCL-loaded classes as an immutable Map
-     * 
+     *
      * @return Map
      */
     public Map<String, Class> getLoadedClasses() {
